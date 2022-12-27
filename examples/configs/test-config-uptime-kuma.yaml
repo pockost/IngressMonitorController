@@ -1,0 +1,6 @@
+providers:
+  - name: UptimeKumaApi
+    apiURL: http://localhost:8000
+    username: admin
+    password: admin
+enableMonitorDeletion: true

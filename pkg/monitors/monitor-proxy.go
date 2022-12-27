@@ -1,16 +1,17 @@
 package monitors
 
 import (
-	endpointmonitorv1alpha1 "github.com/stakater/IngressMonitorController/v2/api/v1alpha1"
-	"github.com/stakater/IngressMonitorController/v2/pkg/config"
-	"github.com/stakater/IngressMonitorController/v2/pkg/models"
-	"github.com/stakater/IngressMonitorController/v2/pkg/monitors/appinsights"
-	"github.com/stakater/IngressMonitorController/v2/pkg/monitors/gcloud"
-	"github.com/stakater/IngressMonitorController/v2/pkg/monitors/pingdom"
-	"github.com/stakater/IngressMonitorController/v2/pkg/monitors/statuscake"
-	"github.com/stakater/IngressMonitorController/v2/pkg/monitors/updown"
-	"github.com/stakater/IngressMonitorController/v2/pkg/monitors/uptime"
-	"github.com/stakater/IngressMonitorController/v2/pkg/monitors/uptimerobot"
+	endpointmonitorv1alpha1 "github.com/stakater/IngressMonitorController/api/v1alpha1"
+	"github.com/stakater/IngressMonitorController/pkg/config"
+	"github.com/stakater/IngressMonitorController/pkg/models"
+	"github.com/stakater/IngressMonitorController/pkg/monitors/appinsights"
+	"github.com/stakater/IngressMonitorController/pkg/monitors/gcloud"
+	"github.com/stakater/IngressMonitorController/pkg/monitors/pingdom"
+	"github.com/stakater/IngressMonitorController/pkg/monitors/statuscake"
+	"github.com/stakater/IngressMonitorController/pkg/monitors/updown"
+	"github.com/stakater/IngressMonitorController/pkg/monitors/uptime"
+	"github.com/stakater/IngressMonitorController/pkg/monitors/uptimerobot"
+	"github.com/stakater/IngressMonitorController/pkg/monitors/uptimekumaapi"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
@@ -42,6 +43,8 @@ func (mp *MonitorServiceProxy) OfType(mType string) MonitorServiceProxy {
 		mp.monitor = &appinsights.AppinsightsMonitorService{}
 	case "gcloud":
 		mp.monitor = &gcloud.MonitorService{}
+	case "UptimeKumaApi":
+		mp.monitor = &uptimekumaapi.UptimeKumaApiMonitorService{}
 	default:
 		panic("No such provider found: " + mType)
 	}
@@ -66,6 +69,8 @@ func (mp *MonitorServiceProxy) ExtractConfig(spec endpointmonitorv1alpha1.Endpoi
 		config = spec.AppInsightsConfig
 	case "gcloud":
 		config = spec.GCloudConfig
+	case "UptimeKumaApi":
+		config = spec.UptimeKumaApiConfig
 	default:
 		return config
 	}

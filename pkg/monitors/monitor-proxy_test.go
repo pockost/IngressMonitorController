@@ -15,6 +15,15 @@ func TestMonitorServiceProxyOfTypeWithCorrectType(t *testing.T) {
 	}
 }
 
+func TestMonitorServiceUptimeKumaApiWithCorrectType(t *testing.T) {
+	monitorType := "UptimeKumaApi"
+	uptime := (&MonitorServiceProxy{}).OfType(monitorType)
+
+	if uptime.monitorType != monitorType {
+		t.Error("Monitor UptimeKumaApi is not registred")
+	}
+}
+
 func TestMonitorServiceProxyOfTypeWithWrongType(t *testing.T) {
 	util.AssertPanic(t, func() {
 		monitorType := "Testing"

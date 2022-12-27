@@ -67,6 +67,10 @@ type EndpointMonitorSpec struct {
 	// Configuration for Google Cloud Monitor Provider
 	// +optional
 	GCloudConfig *GCloudConfig `json:"gcloudConfig,omitempty"`
+
+	// Configuration for Uptime Kuma Api Monitor Provider
+	// +optional
+	UptimeKumaApiConfig *UptimeKumaApiConfig`json:"gcloudConfig,omitempty"`
 }
 
 // UptimeRobotConfig defines the configuration for UptimeRobot Monitor Provider
@@ -294,6 +298,10 @@ type GCloudConfig struct {
 	// Google Cloud Project ID
 	// +optional
 	ProjectId string `json:"projectId,omitempty"`
+}
+
+// UptimeKumaApiConfig defines the configuration for Uptime Kuma Api Monitor Provider
+type UptimeKumaApiConfig struct {
 }
 
 // URLSource represents the set of resources to fetch the URL from
