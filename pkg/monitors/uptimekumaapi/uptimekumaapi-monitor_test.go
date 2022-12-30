@@ -35,7 +35,7 @@ func emptyMonitorList(service UptimeKumaApiMonitorService) {
 func createMonitor(service UptimeKumaApiMonitorService, name string, url string) {
 	monitor := models.Monitor{
 		Name: name,
-		URL: url,
+		URL:  url,
 	}
 
 	service.Add(monitor)
@@ -69,7 +69,7 @@ func TestEqualMonitor(t *testing.T) {
 		t.Fatal(err, "Unable to get service")
 	}
 
-	if ! service.Equal(*monitor1, *monitor2) {
+	if !service.Equal(*monitor1, *monitor2) {
 		t.Fatal("Test of Equal monitor should return true")
 	}
 
@@ -95,7 +95,6 @@ func TestEqualMonitor(t *testing.T) {
 		t.Fatal("Name has change, should return false")
 	}
 
-
 }
 
 func TestSetupMonitor(t *testing.T) {
@@ -105,7 +104,7 @@ func TestSetupMonitor(t *testing.T) {
 	if service.apiUrl == "" {
 		t.Fatalf("API Url is not loaded")
 	}
-	if service.apiPassword  == "" {
+	if service.apiPassword == "" {
 		t.Fatalf("Password is not loaded")
 	}
 	if service.apiUsername == "" {
@@ -144,14 +143,13 @@ func TestGetAllMonitorWithElement(t *testing.T) {
 
 }
 
-
 func TestAddMonitor(t *testing.T) {
 	service := setupService(t)
 	emptyMonitorList(service)
 
 	monitor := models.Monitor{
 		Name: "google.com",
-		URL: "https://www.google.com",
+		URL:  "https://www.google.com",
 	}
 
 	service.Add(monitor)
@@ -223,4 +221,3 @@ func TestUpdateMonitor(t *testing.T) {
 		t.Error("Monitor URL is not correct after update")
 	}
 }
-

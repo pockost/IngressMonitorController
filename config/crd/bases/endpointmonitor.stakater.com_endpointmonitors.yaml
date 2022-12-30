@@ -206,6 +206,9 @@ spec:
                     description: Add one or more tags for the check separated by `,`
                     type: string
                 type: object
+              uptimeKumaApiConfig:
+                description: Configuration for Uptime Kuma Api Monitor Provider
+                type: object
               uptimeRobotConfig:
                 description: Configuration for UptimeRobot Monitor Provider
                 properties:

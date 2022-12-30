@@ -1,8 +1,8 @@
 package uptimekumaapi
 
 import (
-	"errors"
 	"encoding/json"
+	"errors"
 	"fmt"
 	Http "net/http"
 	"strconv"
@@ -126,8 +126,7 @@ func (service *UptimeKumaApiMonitorService) Update(m models.Monitor) {
 		bodyHasChange = true
 	}
 
-
-	if ( bodyHasChange ) {
+	if bodyHasChange {
 
 		route := fmt.Sprintf("/monitors/%s", oldMonitor.ID)
 
@@ -146,7 +145,6 @@ func (service *UptimeKumaApiMonitorService) Update(m models.Monitor) {
 
 		client.RequestWithHeaders("PATCH", body, headers)
 	}
-
 
 }
 
@@ -173,7 +171,7 @@ func (service *UptimeKumaApiMonitorService) Remove(m models.Monitor) {
 
 	// Delete monitor
 	response := client.DeleteUrl(headers, nil)
-	
+
 	// Handle error
 	if response.StatusCode != Http.StatusOK {
 		var f UptimeKumaApiErrorResponse
@@ -206,7 +204,6 @@ func (service *UptimeKumaApiMonitorService) Setup(p config.Provider) {
 	} else {
 		log.Error(nil, "Unable to authenticate")
 	}
-
 
 }
 

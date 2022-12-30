@@ -70,7 +70,7 @@ type EndpointMonitorSpec struct {
 
 	// Configuration for Uptime Kuma Api Monitor Provider
 	// +optional
-	UptimeKumaApiConfig *UptimeKumaApiConfig`json:"gcloudConfig,omitempty"`
+	UptimeKumaApiConfig *UptimeKumaApiConfig `json:"uptimeKumaApiConfig,omitempty"`
 }
 
 // UptimeRobotConfig defines the configuration for UptimeRobot Monitor Provider
