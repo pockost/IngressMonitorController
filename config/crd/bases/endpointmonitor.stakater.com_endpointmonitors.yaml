@@ -1,9 +1,10 @@
+
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.8.0
+    controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
   name: endpointmonitors.endpointmonitor.stakater.com
 spec:
@@ -209,39 +210,43 @@ spec:
               uptimeKumaApiConfig:
                 description: Configuration for Uptime Kuma Api Monitor Provider
                 properties:
+                  acceptedStatusCodes:
+                    description: Accepted Status Code (100-199, 200-299, 300-399,
+                      400-499, 500-599 or any string between 100 and 999)
+                    items:
+                      type: string
+                    type: array
+                  ignoreTls:
+                    description: Ignoring TLS error for HTTP check
+                    type: boolean
                   interval:
                     description: Set the check interval for the monitor
                     type: integer
-                  retryInterval:
-                    description: Set the retry interval for the monitor
-                    type: integer
-                  resendInterval:
-                    description: Set the resend interval for the monitor
+                  maxRedirects:
+                    description: Maximum number of redirect
                     type: integer
                   maxRetries:
                     description: Set maximum number of retry for the monitor
                     type: integer
                   method:
-                    description: Set HTTP method for the monitor
+                    description: Set HTTP Method for the monitor
                     type: string
+                  resendInterval:
+                    description: Set the Resend interval for the monitor
+                    type: integer
+                  retryInterval:
+                    description: Set the Retry interval for the monitor
+                    type: integer
+                  sslExpire:
+                    description: Enable SSL expiration monitoring
+                    type: boolean
                   type:
                     description: Set monitor type
                     type: string
-                  ignoreTls:
-                    description: Ignore TLS error for HTTP check
-                    type: boolean
                   upsideDown:
-                    description: Invert result (Flip the status upside down. If the service is reachable, it is DOWN)
+                    description: Invert result (Flip the status upside down. If the
+                      service is reachable, it is DOWN)
                     type: boolean
-                  maxRedirects:
-                    description: Maximum number of redirect
-                    type: integer
-                  acceptedStatusCodes:
-                    description: Accepted Status Code (100-199, 200-299, 300-399, 400-499, 500-599 or any string between 100 and 999)
-                    type: array
-                    items:
-                      type: string
-                      pattern: '^((\d)00-\d99|\d{3})$'
                 type: object
               uptimeRobotConfig:
                 description: Configuration for UptimeRobot Monitor Provider
