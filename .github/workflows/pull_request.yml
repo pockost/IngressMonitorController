@@ -40,6 +40,11 @@ jobs:
         only-new-issues: false
         args: --timeout 10m
 
+    - name: Set up Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: v3.10.3
+
     - name: Helm Lint
       run: |
         helm lint charts/ingressmonitorcontroller
@@ -67,6 +72,17 @@ jobs:
         make install
         mkdir -p .local
         echo "${{ secrets.SECRET_KUBERNETES_RESOURCES }}" | base64 --decode > .local/test-config.yaml
+
+    - name: Start uptime kuma api containers
+      run: |
+        cd examples/docker-compose/uptime-kuma/
+        docker compose up -d
+        docker compose exec kuma sqlite3 data/kuma.db 'INSERT INTO user(username, password) SELECT "test", "$2a$10$ReOD2Md5hf6tcHlQdg7rtugkcx2jana43429TAohD8Wj3ob7ZL1rm" WHERE NOT EXISTS(SELECT 1 FROM user WHERE username = "test");'
+        docker compose restart kuma
+
+    - name: Test
+      run: |
+        make test
 
     - name: Test
       run: make test

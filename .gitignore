@@ -9,3 +9,6 @@ out
 bin
 cover.out
 testbin
+
+# Uptime kuma docker compose project
+examples/docker-compose/uptime-kuma/db/
