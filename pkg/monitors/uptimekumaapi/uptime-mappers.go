@@ -10,7 +10,7 @@ import (
 /**
  * Convert a UptimeKumaApiMonitor to base Monitor
  **/
-func UptimeKumaApiMonitorMonitorToBaseMonitorMapper(monitor UptimeKumaApiMonitor) * models.Monitor {
+func UptimeKumaApiMonitorMonitorToBaseMonitorMapper(monitor UptimeKumaApiMonitor) *models.Monitor {
 
 	var m models.Monitor
 

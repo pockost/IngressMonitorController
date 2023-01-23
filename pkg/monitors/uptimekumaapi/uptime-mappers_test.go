@@ -11,20 +11,20 @@ import (
 
 func TestUptimeKumaApiMonitorToBaseMonitorMapper(t *testing.T) {
 	uptimeKumaApiMonitorObject := UptimeKumaApiMonitor{
-		Id: 1,
-		Type: "http",
-		Name: "google.com",
-		Interval: 42,
-		RetryInterval: 43,
-		ResendInterval: 44,
-		MaxRetries: 45,
-		Url: "http://dummy.com",
-		Method: "GET",
-		IgnoreTLS: true,
-		UpsideDown: true,
-		MaxRedirects: 46,
-		AcceptedStatusCodes: []string{"100","142"},
-		SSLExpire: true,
+		Id:                  1,
+		Type:                "http",
+		Name:                "google.com",
+		Interval:            42,
+		RetryInterval:       43,
+		ResendInterval:      44,
+		MaxRetries:          45,
+		Url:                 "http://dummy.com",
+		Method:              "GET",
+		IgnoreTLS:           true,
+		UpsideDown:          true,
+		MaxRedirects:        46,
+		AcceptedStatusCodes: []string{"100", "142"},
+		SSLExpire:           true,
 	}
 
 	monitorObject := UptimeKumaApiMonitorMonitorToBaseMonitorMapper(uptimeKumaApiMonitorObject)
@@ -89,56 +89,56 @@ func TestUptimeKumaApiMonitorToBaseMonitorMapper(t *testing.T) {
 
 func TestUptimeKumaApiMonitorsToBaseMonitorsMapper(t *testing.T) {
 	m1 := UptimeKumaApiMonitor{
-		Id: 1,
-		Type: "http",
-		Name: "myMonitor1",
-		Interval: 1,
-		RetryInterval: 1,
+		Id:             1,
+		Type:           "http",
+		Name:           "myMonitor1",
+		Interval:       1,
+		RetryInterval:  1,
 		ResendInterval: 1,
-		MaxRetries: 1,
-		Url: "http://monitor1.tld",
-		Method: "GET",
+		MaxRetries:     1,
+		Url:            "http://monitor1.tld",
+		Method:         "GET",
 	}
 	m2 := UptimeKumaApiMonitor{
-		Id: 2,
-		Type: "http",
-		Name: "myMonitor2",
-		Interval: 2,
-		RetryInterval: 2,
+		Id:             2,
+		Type:           "http",
+		Name:           "myMonitor2",
+		Interval:       2,
+		RetryInterval:  2,
 		ResendInterval: 2,
-		MaxRetries: 2,
-		Url: "http://monitor2.tld",
-		Method: "GET",
+		MaxRetries:     2,
+		Url:            "http://monitor2.tld",
+		Method:         "GET",
 	}
 
 	// Create correct monitor for testing
 	config1 := &endpointmonitorv1alpha1.UptimeKumaApiConfig{
-		Type: "http",
-		Interval: 1,
-		RetryInterval: 1,
+		Type:           "http",
+		Interval:       1,
+		RetryInterval:  1,
 		ResendInterval: 1,
-		MaxRetries: 1,
-		Method: "GET",
+		MaxRetries:     1,
+		Method:         "GET",
 	}
 	config2 := &endpointmonitorv1alpha1.UptimeKumaApiConfig{
-		Type: "http",
-		Interval: 2,
-		RetryInterval: 2,
+		Type:           "http",
+		Interval:       2,
+		RetryInterval:  2,
 		ResendInterval: 2,
-		MaxRetries: 2,
-		Method: "GET",
+		MaxRetries:     2,
+		Method:         "GET",
 	}
 	correctMonitors := []models.Monitor{
 		{
-			Name: "myMonitor1",
-			ID: "1",
-			URL: "http://monitor1.tld",
+			Name:   "myMonitor1",
+			ID:     "1",
+			URL:    "http://monitor1.tld",
 			Config: config1,
 		},
 		{
-			Name: "myMonitor2",
-			ID: "2",
-			URL: "http://monitor2.tld",
+			Name:   "myMonitor2",
+			ID:     "2",
+			URL:    "http://monitor2.tld",
 			Config: config2,
 		},
 	}

@@ -181,7 +181,7 @@ func TestAddMonitor(t *testing.T) {
 		t.Error("Incorrect default value (RetryInterval)")
 	}
 
-	if providerConfig.ResendInterval!= 0 {
+	if providerConfig.ResendInterval != 0 {
 		t.Error("Incorrect default value (ResendInterval)")
 	}
 	if providerConfig.MaxRetries != 0 {
@@ -217,22 +217,22 @@ func TestAddMonitorWithCustomConfig(t *testing.T) {
 	service := setupService(t)
 	emptyMonitorList(service)
 
-	config := &endpointmonitorv1alpha1.UptimeKumaApiConfig {
-		Type: "http",
-		Interval: 20,
-		RetryInterval: 21,
-		ResendInterval: 22,
-		MaxRetries: 23,
-		Method: "HEAD",
-		IgnoreTLS: true,
-		UpsideDown: true,
-		MaxRedirects: 24,
+	config := &endpointmonitorv1alpha1.UptimeKumaApiConfig{
+		Type:                "http",
+		Interval:            20,
+		RetryInterval:       21,
+		ResendInterval:      22,
+		MaxRetries:          23,
+		Method:              "HEAD",
+		IgnoreTLS:           true,
+		UpsideDown:          true,
+		MaxRedirects:        24,
 		AcceptedStatusCodes: []string{"200", "201"},
-		SSLExpire: false,
+		SSLExpire:           false,
 	}
 	monitor := models.Monitor{
-		Name: "google.com",
-		URL:  "https://www.google.com",
+		Name:   "google.com",
+		URL:    "https://www.google.com",
 		Config: config,
 	}
 
@@ -263,7 +263,7 @@ func TestAddMonitorWithCustomConfig(t *testing.T) {
 		t.Error("Unable to store custom provider configuration (RetryInterval)")
 	}
 
-	if providerConfig.ResendInterval!= 22 {
+	if providerConfig.ResendInterval != 22 {
 		t.Error("Unable to store custom provider configuration (ResendInterval)")
 	}
 	if providerConfig.MaxRetries != 23 {

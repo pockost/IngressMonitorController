@@ -9,10 +9,10 @@ import (
 
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
+	endpointmonitorv1alpha1 "github.com/stakater/IngressMonitorController/v2/api/v1alpha1"
 	"github.com/stakater/IngressMonitorController/v2/pkg/config"
 	"github.com/stakater/IngressMonitorController/v2/pkg/http"
 	"github.com/stakater/IngressMonitorController/v2/pkg/models"
-	endpointmonitorv1alpha1 "github.com/stakater/IngressMonitorController/v2/api/v1alpha1"
 )
 
 var log = logf.Log.WithName("uptimekumaapi-monitor")
@@ -55,16 +55,16 @@ func (service *UptimeKumaApiMonitorService) GetAll() []models.Monitor {
 			m.URL = monitor.Url
 
 			config := &endpointmonitorv1alpha1.UptimeKumaApiConfig{
-				Interval: monitor.Interval,
-				RetryInterval: monitor.RetryInterval,
-				ResendInterval: monitor.ResendInterval,
-				MaxRetries: monitor.MaxRetries,
-				Method: monitor.Method,
-				IgnoreTLS: monitor.IgnoreTLS,
-				UpsideDown: monitor.UpsideDown,
-				MaxRedirects: monitor.MaxRedirects,
+				Interval:            monitor.Interval,
+				RetryInterval:       monitor.RetryInterval,
+				ResendInterval:      monitor.ResendInterval,
+				MaxRetries:          monitor.MaxRetries,
+				Method:              monitor.Method,
+				IgnoreTLS:           monitor.IgnoreTLS,
+				UpsideDown:          monitor.UpsideDown,
+				MaxRedirects:        monitor.MaxRedirects,
 				AcceptedStatusCodes: monitor.AcceptedStatusCodes,
-				SSLExpire: monitor.SSLExpire,
+				SSLExpire:           monitor.SSLExpire,
 			}
 			m.Config = config
 			monitors = append(monitors, m)
@@ -134,7 +134,7 @@ func (service *UptimeKumaApiMonitorService) Add(m models.Monitor) {
 		if providerConfig.AcceptedStatusCodes != nil {
 			uptimeKumaApiMonitor.AcceptedStatusCodes = providerConfig.AcceptedStatusCodes
 		}
-		if providerConfig.SSLExpire {
+		if !providerConfig.SSLExpire {
 			uptimeKumaApiMonitor.SSLExpire = providerConfig.SSLExpire
 		}
 	}
@@ -147,7 +147,6 @@ func (service *UptimeKumaApiMonitorService) Add(m models.Monitor) {
 	if err != nil {
 		log.Error(err, "Unable to marshal json")
 	}
-
 
 	// Add monitor
 	response := client.PostUrl(headers, body)
