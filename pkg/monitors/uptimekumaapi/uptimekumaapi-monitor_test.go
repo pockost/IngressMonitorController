@@ -3,9 +3,10 @@ package uptimekumaapi
 import (
 	"testing"
 
-	"github.com/stakater/IngressMonitorController/pkg/config"
-	"github.com/stakater/IngressMonitorController/pkg/models"
-	"github.com/stakater/IngressMonitorController/pkg/util"
+	endpointmonitorv1alpha1 "github.com/stakater/IngressMonitorController/v2/api/v1alpha1"
+	"github.com/stakater/IngressMonitorController/v2/pkg/config"
+	"github.com/stakater/IngressMonitorController/v2/pkg/models"
+	"github.com/stakater/IngressMonitorController/v2/pkg/util"
 )
 
 // Load config for UptimeKumaApi service
@@ -91,7 +92,7 @@ func TestEqualMonitor(t *testing.T) {
 	// Test if Name has change
 	monitor3.Name = "dummy"
 
-	if !service.Equal(*monitor1, monitor3) {
+	if service.Equal(*monitor1, monitor3) {
 		t.Fatal("Name has change, should return false")
 	}
 
@@ -165,7 +166,144 @@ func TestAddMonitor(t *testing.T) {
 	if monitors[0].Name != "google.com" {
 		t.Error("Created service has not correct name")
 	}
+
+	// Test default values
+	providerConfig, _ := monitors[0].Config.(*endpointmonitorv1alpha1.UptimeKumaApiConfig)
+
+	if providerConfig == nil {
+		t.Error("No provider config returned")
+	}
+
+	if providerConfig.Interval != 60 {
+		t.Error("Incorrect default value (Interval)")
+	}
+	if providerConfig.RetryInterval != 60 {
+		t.Error("Incorrect default value (RetryInterval)")
+	}
+
+	if providerConfig.ResendInterval!= 0 {
+		t.Error("Incorrect default value (ResendInterval)")
+	}
+	if providerConfig.MaxRetries != 0 {
+		t.Error("Incorrect default value (MaxRetries)")
+	}
+	if providerConfig.Method != "GET" {
+		t.Error("Incorrect default value (Method)")
+	}
+	if providerConfig.IgnoreTLS != false {
+		t.Error("Incorrect default value (IgnoreTLS)")
+	}
+	if providerConfig.UpsideDown != false {
+		t.Error("Incorrect default value (UpsideDown)")
+	}
+	if providerConfig.MaxRedirects != 10 {
+		t.Error("Incorrect default value (MaxRedirects)")
+	}
+	acceptedStatusCodesOk := false
+	for _, v := range providerConfig.AcceptedStatusCodes {
+		if v == "200-299" {
+			acceptedStatusCodesOk = true
+		}
+	}
+	if !acceptedStatusCodesOk {
+		t.Error("Incorrect default value (AcceptedStatusCodes)")
+	}
+	if providerConfig.SSLExpire != true {
+		t.Error("Incorrect default value (SSLExpire)")
+	}
 }
+
+func TestAddMonitorWithCustomConfig(t *testing.T) {
+	service := setupService(t)
+	emptyMonitorList(service)
+
+	config := &endpointmonitorv1alpha1.UptimeKumaApiConfig {
+		Type: "http",
+		Interval: 20,
+		RetryInterval: 21,
+		ResendInterval: 22,
+		MaxRetries: 23,
+		Method: "HEAD",
+		IgnoreTLS: true,
+		UpsideDown: true,
+		MaxRedirects: 24,
+		AcceptedStatusCodes: []string{"200", "201"},
+		SSLExpire: false,
+	}
+	monitor := models.Monitor{
+		Name: "google.com",
+		URL:  "https://www.google.com",
+		Config: config,
+	}
+
+	service.Add(monitor)
+
+	monitors := service.GetAll()
+	if len(monitors) == 0 {
+		t.Fatal("No service created")
+	}
+	if len(monitors) > 1 {
+		t.Error("More than one service created")
+	}
+
+	if monitors[0].Name != "google.com" {
+		t.Error("Created service has not correct name")
+	}
+
+	providerConfig, _ := monitors[0].Config.(*endpointmonitorv1alpha1.UptimeKumaApiConfig)
+
+	if providerConfig == nil {
+		t.Error("No provider config returned")
+	}
+
+	if providerConfig.Interval != 20 {
+		t.Error("Unable to store custom provider configuration (Interval)")
+	}
+	if providerConfig.RetryInterval != 21 {
+		t.Error("Unable to store custom provider configuration (RetryInterval)")
+	}
+
+	if providerConfig.ResendInterval!= 22 {
+		t.Error("Unable to store custom provider configuration (ResendInterval)")
+	}
+	if providerConfig.MaxRetries != 23 {
+		t.Error("Unable to store custom provider configuration (MaxRetries)")
+	}
+	if providerConfig.Method != "HEAD" {
+		t.Error("Unable to store custom provider configuration (Method)")
+	}
+	if providerConfig.IgnoreTLS != true {
+		t.Error("Unable to store custom provider configuration (IgnoreTLS)")
+	}
+	if providerConfig.UpsideDown != true {
+		t.Error("Unable to store custom provider configuration (UpsideDown)")
+	}
+	if providerConfig.MaxRedirects != 24 {
+		t.Error("Unable to store custom provider configuration (IgnoreTLS)")
+	}
+	acceptedStatusCodesOk := false
+	for _, v := range providerConfig.AcceptedStatusCodes {
+		if v == "200" {
+			acceptedStatusCodesOk = true
+		}
+	}
+	if !acceptedStatusCodesOk {
+		t.Error("Unable to store custom provider configuration (AcceptedStatusCodes)")
+	}
+	acceptedStatusCodesOk = false
+	for _, v := range providerConfig.AcceptedStatusCodes {
+		if v == "201" {
+			acceptedStatusCodesOk = true
+		}
+	}
+	if !acceptedStatusCodesOk {
+		t.Error("Unable to store custom provider configuration (AcceptedStatusCodes)")
+	}
+	if providerConfig.SSLExpire != false {
+		t.Error("Unable to store custom provider configuration (SSLExpire)")
+	}
+}
+
 func TestUpdateMonitorNoChange(t *testing.T) {
 	service := setupService(t)
 	emptyMonitorList(service)

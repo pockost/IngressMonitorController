@@ -208,6 +208,40 @@ spec:
                 type: object
               uptimeKumaApiConfig:
                 description: Configuration for Uptime Kuma Api Monitor Provider
+                properties:
+                  interval:
+                    description: Set the check interval for the monitor
+                    type: integer
+                  retryInterval:
+                    description: Set the retry interval for the monitor
+                    type: integer
+                  resendInterval:
+                    description: Set the resend interval for the monitor
+                    type: integer
+                  maxRetries:
+                    description: Set maximum number of retry for the monitor
+                    type: integer
+                  method:
+                    description: Set HTTP method for the monitor
+                    type: string
+                  type:
+                    description: Set monitor type
+                    type: string
+                  ignoreTls:
+                    description: Ignore TLS error for HTTP check
+                    type: boolean
+                  upsideDown:
+                    description: Invert result (Flip the status upside down. If the service is reachable, it is DOWN)
+                    type: boolean
+                  maxRedirects:
+                    description: Maximum number of redirect
+                    type: integer
+                  acceptedStatusCodes:
+                    description: Accepted Status Code (100-199, 200-299, 300-399, 400-499, 500-599 or any string between 100 and 999)
+                    type: array
+                    items:
+                      type: string
+                      pattern: '^((\d)00-\d99|\d{3})$'
                 type: object
               uptimeRobotConfig:
                 description: Configuration for UptimeRobot Monitor Provider

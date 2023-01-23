@@ -302,6 +302,39 @@ type GCloudConfig struct {
 
 // UptimeKumaApiConfig defines the configuration for Uptime Kuma Api Monitor Provider
 type UptimeKumaApiConfig struct {
+	// Set the check interval for the monitor
+	// +optional
+	Interval int `json:"interval,omitempty"`
+	// Set the Retry interval for the monitor
+	// +optional
+	RetryInterval int `json:"retryInterval,omitempty"`
+	// Set the Resend interval for the monitor
+	// +optional
+	ResendInterval int `json:"resendInterval,omitempty"`
+	// Set maximum number of retry for the monitor
+	// +optional
+	MaxRetries int `json:"maxRetries,omitempty"`
+	// Set HTTP Method for the monitor
+	// +optional
+	Method string `json:"method,omitempty"`
+	// Set monitor type
+	// +optional
+	Type string `json:"type,omitempty"`
+	// Ignoring TLS error for HTTP check
+	// +optional
+	IgnoreTLS bool `json:"ignoreTls,omitempty"`
+	// Invert result (Flip the status upside down. If the service is reachable, it is DOWN)
+	// +optional
+	UpsideDown bool `json:"upsideDown,omitempty"`
+	// Maximum number of redirect
+	// +optional
+	MaxRedirects int `json:"maxRedirects,omitempty"`
+	// Accepted Status Code (100-199, 200-299, 300-399, 400-499, 500-599 or any string between 100 and 999)
+	// +optional
+	AcceptedStatusCodes []string `json:"acceptedStatusCodes,omitempty"`
+	// Enable SSL expiration monitoring
+	// +optional
+	SSLExpire bool `json:"sslExpire,omitempty"`
 }
 
 // URLSource represents the set of resources to fetch the URL from

@@ -9,9 +9,10 @@ import (
 
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/stakater/IngressMonitorController/pkg/config"
-	"github.com/stakater/IngressMonitorController/pkg/http"
-	"github.com/stakater/IngressMonitorController/pkg/models"
+	"github.com/stakater/IngressMonitorController/v2/pkg/config"
+	"github.com/stakater/IngressMonitorController/v2/pkg/http"
+	"github.com/stakater/IngressMonitorController/v2/pkg/models"
+	endpointmonitorv1alpha1 "github.com/stakater/IngressMonitorController/v2/api/v1alpha1"
 )
 
 var log = logf.Log.WithName("uptimekumaapi-monitor")
@@ -52,6 +53,20 @@ func (service *UptimeKumaApiMonitorService) GetAll() []models.Monitor {
 			m.ID = strconv.Itoa(monitor.Id)
 			m.Name = monitor.Name
 			m.URL = monitor.Url
+
+			config := &endpointmonitorv1alpha1.UptimeKumaApiConfig{
+				Interval: monitor.Interval,
+				RetryInterval: monitor.RetryInterval,
+				ResendInterval: monitor.ResendInterval,
+				MaxRetries: monitor.MaxRetries,
+				Method: monitor.Method,
+				IgnoreTLS: monitor.IgnoreTLS,
+				UpsideDown: monitor.UpsideDown,
+				MaxRedirects: monitor.MaxRedirects,
+				AcceptedStatusCodes: monitor.AcceptedStatusCodes,
+				SSLExpire: monitor.SSLExpire,
+			}
+			m.Config = config
 			monitors = append(monitors, m)
 		}
 
@@ -72,15 +87,58 @@ func (service *UptimeKumaApiMonitorService) Add(m models.Monitor) {
 	headers["Authorization"] = fmt.Sprintf("Bearer %s", service.apiAccessToken)
 	headers["Accept"] = "application/json"
 
+	// Retrieve provider configuration
+	providerConfig, _ := m.Config.(*endpointmonitorv1alpha1.UptimeKumaApiConfig)
+
 	// Construct Body
 	var uptimeKumaApiMonitor UptimeKumaApiMonitor
-	// Fixed data
+	// Default data
 	uptimeKumaApiMonitor.Type = "http"
 	uptimeKumaApiMonitor.Method = "GET"
 	uptimeKumaApiMonitor.Interval = 60
 	uptimeKumaApiMonitor.RetryInterval = 60
 	uptimeKumaApiMonitor.MaxRetries = 0
 	uptimeKumaApiMonitor.ResendInterval = 0
+	uptimeKumaApiMonitor.IgnoreTLS = false
+	uptimeKumaApiMonitor.UpsideDown = false
+	uptimeKumaApiMonitor.MaxRedirects = 10
+	uptimeKumaApiMonitor.AcceptedStatusCodes = []string{"200-299"}
+	uptimeKumaApiMonitor.SSLExpire = true
+
+	// Overrided data
+	if providerConfig != nil {
+		if providerConfig.Interval != 0 {
+			uptimeKumaApiMonitor.Interval = providerConfig.Interval
+		}
+		if providerConfig.RetryInterval != 0 {
+			uptimeKumaApiMonitor.RetryInterval = providerConfig.RetryInterval
+		}
+		if providerConfig.ResendInterval != 0 {
+			uptimeKumaApiMonitor.ResendInterval = providerConfig.ResendInterval
+		}
+		if providerConfig.MaxRetries != 0 {
+			uptimeKumaApiMonitor.MaxRetries = providerConfig.MaxRetries
+		}
+		if providerConfig.Method != "" {
+			uptimeKumaApiMonitor.Method = providerConfig.Method
+		}
+		if providerConfig.IgnoreTLS {
+			uptimeKumaApiMonitor.IgnoreTLS = providerConfig.IgnoreTLS
+		}
+		if providerConfig.UpsideDown {
+			uptimeKumaApiMonitor.UpsideDown = providerConfig.UpsideDown
+		}
+		if providerConfig.MaxRedirects != 0 {
+			uptimeKumaApiMonitor.MaxRedirects = providerConfig.MaxRedirects
+		}
+		if providerConfig.AcceptedStatusCodes != nil {
+			uptimeKumaApiMonitor.AcceptedStatusCodes = providerConfig.AcceptedStatusCodes
+		}
+		if providerConfig.SSLExpire {
+			uptimeKumaApiMonitor.SSLExpire = providerConfig.SSLExpire
+		}
+	}
+
 	// Dynamic data
 	uptimeKumaApiMonitor.Name = m.Name
 	uptimeKumaApiMonitor.Url = m.URL
@@ -89,6 +147,7 @@ func (service *UptimeKumaApiMonitorService) Add(m models.Monitor) {
 	if err != nil {
 		log.Error(err, "Unable to marshal json")
 	}
+
 
 	// Add monitor
 	response := client.PostUrl(headers, body)
