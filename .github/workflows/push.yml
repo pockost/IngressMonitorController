@@ -86,6 +86,7 @@ jobs:
         run: |
           cd examples/docker-compose/uptime-kuma/
           docker compose up -d
+          sleep 10s
           docker compose exec kuma sqlite3 data/kuma.db 'INSERT INTO user(username, password) SELECT "test", "$2a$10$ReOD2Md5hf6tcHlQdg7rtugkcx2jana43429TAohD8Wj3ob7ZL1rm" WHERE NOT EXISTS(SELECT 1 FROM user WHERE username = "test");'
           docker compose restart kuma
 

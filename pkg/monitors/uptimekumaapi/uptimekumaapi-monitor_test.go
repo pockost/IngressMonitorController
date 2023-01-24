@@ -355,7 +355,6 @@ func TestUpdateMonitor(t *testing.T) {
 	if monitor.Name != "google.com" {
 		t.Error("Monitor name is not correct after update")
 	}
-
 	if monitor.URL != "http://dummy.com" {
 		t.Error("Monitor URL is not correct after update")
 	}
