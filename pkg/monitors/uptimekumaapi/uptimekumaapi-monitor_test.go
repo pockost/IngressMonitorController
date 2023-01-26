@@ -1,6 +1,7 @@
 package uptimekumaapi
 
 import (
+	"fmt"
 	"testing"
 
 	endpointmonitorv1alpha1 "github.com/stakater/IngressMonitorController/v2/api/v1alpha1"
@@ -358,4 +359,23 @@ func TestUpdateMonitor(t *testing.T) {
 	if monitor.URL != "http://dummy.com" {
 		t.Error("Monitor URL is not correct after update")
 	}
+}
+
+// Test if an non valid token is regenerated
+func TestReauthIfNeeded(t *testing.T) {
+	service := setupService(t)
+	service.apiAccessToken = ""
+
+	createMonitor(service, "test", "test.com")
+
+	svc, err := service.GetByName("test")
+
+	if err != nil {
+		t.Error(fmt.Sprintf("Unable to regenerate a expirated auth token (%s)", err))
+	}
+
+	if svc == nil {
+		t.Error("Unable to regenerate a expirated auth token")
+	}
+
 }

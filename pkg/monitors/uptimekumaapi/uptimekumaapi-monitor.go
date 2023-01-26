@@ -24,18 +24,33 @@ type UptimeKumaApiMonitorService struct {
 	apiAccessToken string
 }
 
+func (service *UptimeKumaApiMonitorService) GenerateHttpClient(route string) (client *http.HttpClient, headers map[string]string) {
+
+	cli := http.CreateHttpClient(service.apiUrl + route)
+
+	// Construct headers
+	head := make(map[string]string)
+	head["Authorization"] = fmt.Sprintf("Bearer %s", service.apiAccessToken)
+	head["Accept"] = "application/json"
+
+	// Test si authentification is valide
+	client_test := http.CreateHttpClient(service.apiUrl + "/info/")
+	response := client_test.GetUrl(head, nil)
+	if response.StatusCode != Http.StatusOK {
+		service.RetreiveAccessToken()
+		head["Authorization"] = fmt.Sprintf("Bearer %s", service.apiAccessToken)
+	}
+
+	return cli, head
+}
+
 func (service *UptimeKumaApiMonitorService) GetAll() []models.Monitor {
 
 	var monitors []models.Monitor
 
 	route := "/monitors"
 
-	client := http.CreateHttpClient(service.apiUrl + route)
-
-	// Construct headers
-	headers := make(map[string]string)
-	headers["Authorization"] = fmt.Sprintf("Bearer %s", service.apiAccessToken)
-	headers["Accept"] = "application/json"
+	client, headers := service.GenerateHttpClient(route)
 
 	// Request monitor list
 	response := client.GetUrl(headers, nil)
@@ -80,12 +95,7 @@ func (service *UptimeKumaApiMonitorService) GetAll() []models.Monitor {
 func (service *UptimeKumaApiMonitorService) Add(m models.Monitor) {
 	route := "/monitors/"
 
-	client := http.CreateHttpClient(service.apiUrl + route)
-
-	// Construct headers
-	headers := make(map[string]string)
-	headers["Authorization"] = fmt.Sprintf("Bearer %s", service.apiAccessToken)
-	headers["Accept"] = "application/json"
+	client, headers := service.GenerateHttpClient(route)
 
 	// Retrieve provider configuration
 	providerConfig, _ := m.Config.(*endpointmonitorv1alpha1.UptimeKumaApiConfig)
@@ -188,12 +198,7 @@ func (service *UptimeKumaApiMonitorService) Update(m models.Monitor) {
 
 		route := fmt.Sprintf("/monitors/%s", oldMonitor.ID)
 
-		client := http.CreateHttpClient(service.apiUrl + route)
-
-		// Construct headers
-		headers := make(map[string]string)
-		headers["Authorization"] = fmt.Sprintf("Bearer %s", service.apiAccessToken)
-		headers["Accept"] = "application/json"
+		client, headers := service.GenerateHttpClient(route)
 
 		body, err := json.Marshal(uptimeKumaApiMonitor)
 
@@ -220,12 +225,7 @@ func (service *UptimeKumaApiMonitorService) Remove(m models.Monitor) {
 
 	route := fmt.Sprintf("/monitors/%s", m.ID)
 
-	client := http.CreateHttpClient(service.apiUrl + route)
-
-	// Construct headers
-	headers := make(map[string]string)
-	headers["Authorization"] = fmt.Sprintf("Bearer %s", service.apiAccessToken)
-	headers["Accept"] = "application/json"
+	client, headers := service.GenerateHttpClient(route)
 
 	// Delete monitor
 	response := client.DeleteUrl(headers, nil)
@@ -241,12 +241,8 @@ func (service *UptimeKumaApiMonitorService) Remove(m models.Monitor) {
 	}
 }
 
-func (service *UptimeKumaApiMonitorService) Setup(p config.Provider) {
-	service.apiUsername = p.Username
-	service.apiPassword = p.Password
-	service.apiUrl = p.ApiURL
+func (service *UptimeKumaApiMonitorService) RetreiveAccessToken() {
 
-	// Authenticate user and save access token
 	route := "/login/access-token/"
 	client := http.CreateHttpClient(service.apiUrl + route)
 	body := fmt.Sprintf("grant_type=&username=%s&password=%s&scope=&client_id=&client_secret=", service.apiUsername, service.apiPassword)
@@ -262,6 +258,16 @@ func (service *UptimeKumaApiMonitorService) Setup(p config.Provider) {
 	} else {
 		log.Error(nil, "Unable to authenticate")
 	}
+}
+
+func (service *UptimeKumaApiMonitorService) Setup(p config.Provider) {
+	service.apiUsername = p.Username
+	service.apiPassword = p.Password
+	service.apiUrl = p.ApiURL
+
+	service.RetreiveAccessToken()
+
+	// Authenticate user and save access token
 
 }
 
