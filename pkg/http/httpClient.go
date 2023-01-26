@@ -32,6 +32,7 @@ func (client *HttpClient) addHeaders(request *http.Request, headers map[string]s
 
 func (client *HttpClient) RequestWithHeaders(requestType string, body []byte, headers map[string]string) HttpResponse {
 	reader := bytes.NewReader(body)
+	var httpResponse HttpResponse
 
 	//   log.Info("NewRequest: METHOD: " + requestType + " URL: " + client.url + " PAYLOAD: " + string(body))
 
@@ -49,11 +50,13 @@ func (client *HttpClient) RequestWithHeaders(requestType string, body []byte, he
 	response, err := http.DefaultClient.Do(request)
 	if err != nil {
 		log.Error(err, "")
+		return httpResponse
 	} else if response == nil {
 		log.Error(nil, "got empty response")
+		return httpResponse
 	}
 
-	httpResponse := HttpResponse{StatusCode: response.StatusCode}
+	httpResponse = HttpResponse{StatusCode: response.StatusCode}
 
 	defer response.Body.Close()
 	responseBytes, _ := ioutil.ReadAll(response.Body)

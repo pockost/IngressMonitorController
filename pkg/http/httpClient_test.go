@@ -66,3 +66,17 @@ func TestDeleteUrlShouldReturn405Status(t *testing.T) {
 		t.Error("Status code mismatch")
 	}
 }
+
+func TestUnresponsibleUrl(t *testing.T) {
+	url := "https://imnotexisting-aerdgfhzrdfg.com"
+	client := CreateHttpClient(url)
+
+	response := client.GetUrl(make(map[string]string), []byte(""))
+
+	if response.StatusCode != 0 {
+		t.Error("Unresponsible URL should return a non valide response (status code 0)")
+	}
+	if response.Bytes != nil {
+		t.Error("Unresponsible URL should return a non valide response (Bytes should be nil)")
+	}
+}
