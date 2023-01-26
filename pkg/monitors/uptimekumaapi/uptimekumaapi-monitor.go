@@ -1,6 +1,7 @@
 package uptimekumaapi
 
 import (
+	"time"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -39,6 +40,7 @@ func (service *UptimeKumaApiMonitorService) GenerateHttpClient(route string) (cl
 	if response.StatusCode != Http.StatusOK {
 		service.RetreiveAccessToken()
 		head["Authorization"] = fmt.Sprintf("Bearer %s", service.apiAccessToken)
+	} else {
 	}
 
 	return cli, head
@@ -257,6 +259,9 @@ func (service *UptimeKumaApiMonitorService) RetreiveAccessToken() {
 		service.apiAccessToken = f.AccessToken
 	} else {
 		log.Error(nil, "Unable to authenticate")
+		// Retry in 5 seconde
+		time.Sleep(5 * time.Second)
+		service.RetreiveAccessToken()
 	}
 }
 
