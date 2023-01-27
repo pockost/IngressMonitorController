@@ -50,7 +50,7 @@ func (service *UptimeKumaApiMonitorService) GetAll() []models.Monitor {
 
 	var monitors []models.Monitor
 
-	route := "/monitors"
+	route := "/monitors/"
 
 	client, headers := service.GenerateHttpClient(route)
 
